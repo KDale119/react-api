@@ -8,7 +8,6 @@ function App() {
       <div className="App">
           <h2 className="header">Albums</h2>
           <DataDisplay/>
-          <AlbumForm/>
       </div>
   );
 }

@@ -1,13 +1,16 @@
 import * as yup from 'yup'
 import {yupResolver} from "@hookform/resolvers/yup"
-import React, {useEffect, useState} from "react";
+import React, {Dispatch, SetStateAction, useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
 import axios from "axios";
 
-export default function AlbumForm() {
+interface DataProps {
+    setAlbums: Dispatch<SetStateAction<any[] | undefined>>;
+}
+
+export default function AlbumForm({setAlbums}:DataProps) {
     const schema = yup.object().shape({
         userId: yup.number().max(4).required("User ID required"),
-        id: yup.number().max(4).required("ID is required"),
         title: yup.string().min(4).max(30).required("Title is required")
     })
     const {register, handleSubmit, formState: {errors}} = useForm({
@@ -17,42 +20,45 @@ export default function AlbumForm() {
             title: ""
         }
     })
-    const onSubmit = (formData: { userId: number, id: number, title: string }) => {
+    const onSubmit = (formData: { userId: number, title: string }) => {
+        console.log(formData);
         axios.post('https://jsonplaceholder.typicode.com/albums', {
             title: formData.title
+        }).then(response => {
+            setAlbums(response.data + setAlbums)
         })
         alert("Form submitted")
         console.log(formData)
     }
-    const formKeys: {id: string, name: "userId" | "id" | "title"}[] = [{
-        id: "a",
-        name: "userId"
-    }, {id: "b", name: "id"}, {id: "c", name: "title"}]
+    const formKeys: {id: string, name: "title"}[] = [{
+        id: "c", name: "title"}]
 
     return (
         <div className="App">
             <header className="App-header"></header>
             <h2 className="header">Add Album</h2>
-            <label>User ID</label>
-            <select id="a">
-                <option>1</option>
-                <option>2</option>
-                <option>3</option>
-                <option>4</option>
-                <option>5</option>
-                <option>6</option>
-                <option>7</option>
-                <option>8</option>
-                <option>9</option>
-                <option>10</option>
-            </select>
             <form className="form" onSubmit={handleSubmit(onSubmit)}>
+                {formKeys.map(item => (
                     <>
-                        <input placeholder="title" id="c"/>
+                        <label>User ID</label>
+                        <select id="a">
+                            <option>1</option>
+                            <option>2</option>
+                            <option>3</option>
+                            <option>4</option>
+                            <option>5</option>
+                            <option>6</option>
+                            <option>7</option>
+                            <option>8</option>
+                            <option>9</option>
+                            <option>10</option>
+                        </select>
+                        <input placeholder="title" id="c"{...register(item.name)}/>
                     </>
-                <button className="button">Submit</button>
+                ))}
+                <button className="button">Submit </button>
             </form>
-            {/*<AlbumForm/>*/}
+
         </div>
     )
 }

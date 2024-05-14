@@ -6,6 +6,7 @@ import axios from "axios";
 
 interface DataProps {
     setAlbums: Dispatch<SetStateAction<any[] | undefined>>;
+
 }
 
 export default function AlbumForm({setAlbums}:DataProps) {
@@ -25,7 +26,14 @@ export default function AlbumForm({setAlbums}:DataProps) {
         axios.post('https://jsonplaceholder.typicode.com/albums', {
             title: formData.title
         }).then(response => {
-            setAlbums(response.data + setAlbums)
+            setAlbums(prevState => {
+                console.log(prevState);
+                // prevState= old data in albums
+                prevState?.push(response.data)
+                // prevState now current data
+                console.log(prevState)
+                return [...prevState as any []];
+            })
         })
         alert("Form submitted")
         console.log(formData)
